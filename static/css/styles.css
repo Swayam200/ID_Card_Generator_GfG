@@ -1,0 +1,322 @@
+/* --- Global Styles & Variables --- */
+:root {
+    --gfg-green: #2f8d46;
+    --gfg-green-600: #2a7a3d;
+    --gfg-accent: #a3ffb3;
+    --ink: #111111;
+    --card-bg: #0b0b0c;
+    --muted: #cfd3d7;
+    --text-primary: #f0f2f5;
+    --text-secondary: #a8b3cf;
+    --border-color: #333;
+    --error-color: #ff6b6b;
+    --font-stack: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-stack);
+    background-color: var(--ink);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    padding: 2rem 1rem;
+    flex-grow: 1;
+}
+
+h1,
+h2 {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+a {
+    color: var(--gfg-accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* --- Form Card Styling (index.html) --- */
+.form-card {
+    background-color: var(--card-bg);
+    padding: 2rem 2.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-header h1 {
+    color: var(--gfg-green);
+    font-size: 1.2rem;
+}
+
+.form-header h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: var(--text-secondary);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #1a1a1c;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--gfg-green);
+    box-shadow: 0 0 0 3px rgba(47, 141, 70, 0.3);
+}
+
+/* Input Validation States */
+.form-group input.invalid {
+    border-color: var(--error-color);
+}
+
+.form-group input.valid {
+    border-color: var(--gfg-green);
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    min-height: 1.2em;
+    display: block;
+}
+
+.hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+/* Photo Upload */
+.photo-preview-container {
+    width: 120px;
+    height: 120px;
+    margin: 0.5rem auto 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--border-color);
+}
+
+#photo-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+input[type="file"] {
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+input[type="file"]::file-selector-button {
+    background-color: var(--gfg-green-600);
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: var(--gfg-green);
+}
+
+
+/* --- Buttons --- */
+button,
+.back-link {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: var(--gfg-green);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    display: inline-block;
+    text-align: center;
+}
+
+button:hover {
+    background-color: var(--gfg-green-600);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+/* --- Flashed Messages --- */
+.flash-messages {
+    background-color: rgba(255, 107, 107, 0.1);
+    border: 1px solid var(--error-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.flash-error {
+    color: var(--error-color);
+    margin: 0;
+}
+
+/* --- Card Viewer (id_card.html) --- */
+.card-viewer {
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+}
+
+.card-viewer h1 {
+    margin-bottom: 0.5rem;
+}
+
+.card-viewer p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.card-display {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.id-card-image {
+    max-width: 350px;
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.controls .back-link {
+    grid-column: 1 / -1;
+    /* Span full width */
+    background-color: #333;
+}
+
+.controls .back-link:hover {
+    background-color: #444;
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* --- Print Styles --- */
+#print-container {
+    display: none;
+    /* Hidden by default */
+}
+
+@media print {
+
+    body,
+    .container,
+    main {
+        background: none;
+        color: black;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    .card-viewer,
+    footer,
+    .controls,
+    .form-card {
+        display: none;
+    }
+
+    #print-container {
+        display: block;
+    }
+
+    .print-card-face {
+        width: 86mm;
+        height: 54mm;
+        object-fit: contain;
+        display: block;
+        /* Ensures proper block-level behavior for page breaks */
+    }
+
+    /* Force the second card face (the back) to a new page */
+    .print-card-face:nth-child(2) {
+        page-break-before: always;
+    }
+
+    @page {
+        size: 86mm 54mm;
+        margin: 0;
+    }
+}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Home - GFG ID Card Generator{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <header class="form-header">
+        <h1>GFG Technical Team</h1>
+        <h2>ID Card Generator</h2>
+        <p>Upload your details to auto-generate your participation badge.</p>
+    </header>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-messages" aria-live="polite">
+        {% for message in messages %}
+        <p class="flash-error">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <form id="id-form" action="{{ url_for('generate_card') }}" method="post" enctype="multipart/form-data" novalidate>
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required minlength="2" maxlength="40" pattern="[A-Za-z\s]+">
+            <small class="error-message"></small>
+        </div>
+    
+        <div class="form-group">
+            <label for="reg_no">Registration Number</label>
+            <input type="text" id="reg_no" name="reg_no" required minlength="6" maxlength="20" pattern="[A-Za-z0-9\-_/]+">
+            <small class="error-message"></small>
+        </div>
+    
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required maxlength="50">
+            <small class="error-message"></small>
+        </div>
+    
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required pattern="[\d\s\-\+()]+" minlength="10" maxlength="20">
+            <small class="error-message"></small>
+        </div>
+    
+        <div class="form-group photo-group">
+            <label for="photo">Upload Photo</label>
+            <div class="photo-preview-container">
+                <img id="photo-preview" src="https://via.placeholder.com/150" alt="Photo preview">
+            </div>
+            <input type="file" id="photo" name="photo" required accept="image/jpeg, image/png">
+            <small class="error-message"></small>
+            <small class="hint">Max 4 MB. Use a clear, front-facing photo.</small>
+        </div>
+    
+        <button type="submit" id="submit-btn" disabled>Generate Card</button>
+    </form>
+</div>
+{% endblock %}

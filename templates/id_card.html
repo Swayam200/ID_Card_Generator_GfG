@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Your Generated ID Card{% endblock %}
+
+{% block content %}
+<div class="card-viewer">
+    <h1>Your ID Card is Ready!</h1>
+    <p>Use the buttons below to save or print your card.</p>
+
+    <div id="card-export-area">
+        <div class="card-display">
+            <img src="{{ front_image }}" alt="Front of ID Card" class="id-card-image">
+            <img src="{{ back_image }}" alt="Back of ID Card" class="id-card-image">
+        </div>
+    </div>
+
+    <div class="controls">
+        <button id="download-png-btn">Download as PNG</button>
+        <button id="download-pdf-btn">Download as PDF</button>
+        <button id="print-btn">Print Card</button>
+        <a href="{{ url_for('index') }}" class="back-link">Go Back</a>
+    </div>
+</div>
+
+<div id="print-container">
+    <img src="{{ front_image }}" alt="Front of ID Card for Printing" class="print-card-face">
+    <img src="{{ back_image }}" alt="Back of ID Card for Printing" class="print-card-face">
+</div>
+{% endblock %}

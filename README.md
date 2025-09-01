@@ -2,7 +2,9 @@
 
 A simple, production-ready Flask web application that allows users to generate a participation ID card by filling out a form. This project focuses on a clean user experience, robust server-side validation, and image processing to superimpose user data onto a pre-designed card template.
 
-![Screenshot of the generated ID card](https://i.imgur.com/example.png) ## Features
+Screenshot here
+
+## Features
 
 -   **Simple Web Form**: Clean interface to input Name, Registration Number, and upload a photo.
 -   **Live Preview**: Client-side validation with live feedback and photo preview.
@@ -18,4 +20,4 @@ A simple, production-ready Flask web application that allows users to generate a
 -   **Image Processing**: Pillow (PIL Fork)
 -   **Frontend**: HTML5, Vanilla CSS (Flexbox/Grid), Vanilla JavaScript
 -   **Export Libraries (CDN)**: `html2canvas`, `jspdf`
--   **Deployment Target**: Render.com (instructions below)
+-   **Deployment Target**: Not decided yet

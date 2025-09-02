@@ -364,6 +364,7 @@ footer {
     background: var(--border-color);
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .crop-slider::-webkit-slider-thumb {
@@ -446,4 +447,20 @@ footer {
 .verification-details p {
     margin: 0;
     color: var(--text-primary);
+}
+
+@media (min-width: 900px) {
+  .container {
+    max-width: 1200px;
+    padding: 3rem 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .form-card {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 3rem 4rem;
+    font-size: 1.15rem;
+  }
 }

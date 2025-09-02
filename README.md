@@ -11,6 +11,10 @@ Initial Form Filling
 
 Final Generated ID Card  
 
+![ID Verification](<project_screenshots/ID Card Verification.JPG>)
+
+ID Card Verification  
+
 ## Features
 
 -   **Simple Web Form**: Clean interface to input Name, Registration Number, and upload a photo.

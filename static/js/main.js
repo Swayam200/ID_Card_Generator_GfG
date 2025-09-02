@@ -93,20 +93,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const ctx = canvas.getContext('2d');
             const canvasSize = 200;
 
-            // Clear canvas with checkered background
+            // Clear canvas
             ctx.clearRect(0, 0, canvasSize, canvasSize);
 
-            // Calculate aspect ratio and initial size to fit image properly
+            // Calculate aspect ratio and initial size to match server-side processing
             const imgAspect = originalImage.width / originalImage.height;
             let baseWidth, baseHeight;
 
+            // Use the same logic as server-side ImageOps.fit - fill the entire area
             if (imgAspect > 1) {
-                // Landscape image
-                baseHeight = canvasSize * 0.8;
+                // Landscape image - fill height, crop width
+                baseHeight = canvasSize;
                 baseWidth = baseHeight * imgAspect;
             } else {
-                // Portrait image
-                baseWidth = canvasSize * 0.8;
+                // Portrait image - fill width, crop height
+                baseWidth = canvasSize;
                 baseHeight = baseWidth / imgAspect;
             }
 
@@ -131,15 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
             canvas.width = size;
             canvas.height = size;
 
-            // Calculate image dimensions and position (same logic as preview but scaled up)
+            // Calculate image dimensions to match server-side ImageOps.fit behavior
             const imgAspect = originalImage.width / originalImage.height;
             let baseWidth, baseHeight;
 
+            // Fill the entire area like server-side processing
             if (imgAspect > 1) {
-                baseHeight = size * 0.8;
+                baseHeight = size;
                 baseWidth = baseHeight * imgAspect;
             } else {
-                baseWidth = size * 0.8;
+                baseWidth = size;
                 baseHeight = baseWidth / imgAspect;
             }
 

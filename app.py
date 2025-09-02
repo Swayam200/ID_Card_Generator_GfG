@@ -104,6 +104,14 @@ def generate_card():
 
             # --- Process Photo ---
             user_photo = Image.open(file.stream).convert("RGBA")
+
+            # Mobile Horizontal Image Invert Bug Fix
+            try:
+                transposed = ImageOps.exif_transpose(user_photo)
+                if transposed is not None:
+                    user_photo = transposed
+            except Exception:
+                pass
             photo_size = (285, 285)
 
             # Check if this is a pre-processed image (from frontend cropping)
@@ -127,9 +135,16 @@ def generate_card():
             while name_font.getbbox(name)[2] > MAX_NAME_WIDTH and current_font_size > MIN_FONT_SIZE:
                 current_font_size -= 1
                 name_font = ImageFont.truetype(font_bold_path, size=current_font_size)
+
             name_bbox = draw_front.textbbox((0, 0), name, font=name_font)
             name_width = name_bbox[2] - name_bbox[0]
-            name_position = ((front_template.width - name_width) / 2, 585)
+
+            # Adjust vertical position based on font size - larger fonts go higher
+            base_y = 585
+            font_adjustment = (current_font_size - MIN_FONT_SIZE) * 0.5  # 0.5px up per font size increase
+            adjusted_y = base_y - font_adjustment
+
+            name_position = ((front_template.width - name_width) / 2, adjusted_y)
             draw_front.text(name_position, name, font=name_font, fill=(47, 141, 70, 255))
 
             # --- Draw Details Block ---

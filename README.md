@@ -3,10 +3,12 @@
 A simple, production-ready Flask web application that allows users to generate a participation ID card by filling out a form. This project focuses on a clean user experience, robust server-side validation, and image processing to superimpose user data onto a pre-designed card template.
 
 ## Screenshots
-![Initial Form Filling](project_screenshots/initial_form_filing.png)
+![Initial Form Filling](project_screenshots/initial_form_filing.png)  
+
 Initial Form Filling
 
-![Final Created ID](project_screenshots/created_id.png)
+![Final Created ID](project_screenshots/created_id.png)  
+
 Final Generated ID Card  
 
 ## Features

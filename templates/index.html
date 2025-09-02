@@ -48,11 +48,59 @@
         <div class="form-group photo-group">
             <label for="photo">Upload Photo</label>
             <div class="photo-preview-container">
-                <img id="photo-preview" src="https://via.placeholder.com/150" alt="Photo preview">
+                <img id="photo-preview"
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%232a2a2c'/%3E%3Ctext x='60' y='65' font-family='Arial' font-size='12' fill='%23888' text-anchor='middle'%3EPhoto%3C/text%3E%3C/svg%3E"
+                    alt="Photo preview">
             </div>
             <input type="file" id="photo" name="photo" required accept="image/jpeg, image/png">
             <small class="error-message"></small>
             <small class="hint">Max 4 MB. Use a clear, front-facing photo.</small>
+        
+            <div id="crop-controls" class="crop-controls">
+                <h4>Adjust Your Photo Position</h4>
+        
+                <div class="crop-workspace">
+                    <div class="crop-preview-container">
+                        <canvas id="crop-canvas" width="200" height="200"></canvas>
+                        <div class="crop-overlay"></div>
+                    </div>
+        
+                    <div class="crop-controls-panel">
+                        <div class="crop-slider-group">
+                            <label>
+                                Zoom
+                                <span class="slider-value" id="zoom-value">1.0x</span>
+                            </label>
+                            <input type="range" id="zoom-slider" class="crop-slider" min="0.5" max="3" step="0.1" value="1">
+                        </div>
+        
+                        <div class="crop-slider-group">
+                            <label>
+                                Horizontal
+                                <span class="slider-value" id="pos-x-value">0</span>
+                            </label>
+                            <input type="range" id="pos-x-slider" class="crop-slider" min="-100" max="100" step="5" value="0">
+                        </div>
+        
+                        <div class="crop-slider-group">
+                            <label>
+                                Vertical
+                                <span class="slider-value" id="pos-y-value">0</span>
+                            </label>
+                            <input type="range" id="pos-y-slider" class="crop-slider" min="-100" max="100" step="5" value="0">
+                        </div>
+        
+                        <div class="crop-buttons">
+                            <button type="button" id="reset-crop-btn" class="reset-btn">Reset</button>
+                            <button type="button" id="apply-crop-btn" class="apply-btn">Apply</button>
+                        </div>
+                    </div>
+                </div>
+        
+                <div id="crop-status" class="crop-status">
+                    Adjust the sliders to position your photo, then click Apply
+                </div>
+            </div>
         </div>
     
         <button type="submit" id="submit-btn" disabled>Generate Card</button>

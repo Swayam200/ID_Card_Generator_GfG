@@ -78,9 +78,17 @@ def generate_card():
             # --- Process Photo ---
             user_photo = Image.open(file.stream).convert("RGBA")
             photo_size = (285, 285)
-            user_photo = ImageOps.fit(user_photo, photo_size, Image.Resampling.LANCZOS)
-            mask = create_hexagonal_mask(photo_size)
-            user_photo.putalpha(mask)
+
+            # Check if this is a pre-processed image (from frontend cropping)
+            if file.filename == 'processed_photo.png':
+                # Image is already cropped and hexagonal from frontend
+                user_photo = user_photo.resize(photo_size, Image.Resampling.LANCZOS)
+            else:
+                # Apply server-side processing for non-processed images
+                user_photo = ImageOps.fit(user_photo, photo_size, Image.Resampling.LANCZOS)
+                mask = create_hexagonal_mask(photo_size)
+                user_photo.putalpha(mask)
+
             draw_front = ImageDraw.Draw(front_template)
             photo_position = (158, 205) 
             front_template.paste(user_photo, photo_position, user_photo)

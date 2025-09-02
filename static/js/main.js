@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const photoPreview = document.getElementById('photo-preview');
         const submitBtn = document.getElementById('submit-btn');
 
+        // Image cropping variables
+        let originalImage = null;
+        let cropSettings = { zoom: 1, offsetX: 0, offsetY: 0 };
+        let processedImageBlob = null;
+
         const validators = {
             name: {
                 el: nameInput,
@@ -64,16 +69,231 @@ document.addEventListener('DOMContentLoaded', () => {
 
         form.addEventListener('input', validateForm);
 
-        // Live Photo Preview
+        // --- Image Cropping Functions ---
+        const createHexagonalClipPath = (ctx, width, height) => {
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 2 * 0.7; // Make it smaller to fit in circle overlay
+
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * Math.PI) / 3;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+        };
+
+        const updateCropPreview = () => {
+            if (!originalImage) return;
+
+            const canvas = document.getElementById('crop-canvas');
+            const ctx = canvas.getContext('2d');
+            const canvasSize = 200;
+
+            // Clear canvas with checkered background
+            ctx.clearRect(0, 0, canvasSize, canvasSize);
+
+            // Calculate aspect ratio and initial size to fit image properly
+            const imgAspect = originalImage.width / originalImage.height;
+            let baseWidth, baseHeight;
+
+            if (imgAspect > 1) {
+                // Landscape image
+                baseHeight = canvasSize * 0.8;
+                baseWidth = baseHeight * imgAspect;
+            } else {
+                // Portrait image
+                baseWidth = canvasSize * 0.8;
+                baseHeight = baseWidth / imgAspect;
+            }
+
+            // Apply zoom
+            const imgWidth = baseWidth * cropSettings.zoom;
+            const imgHeight = baseHeight * cropSettings.zoom;
+
+            // Center the image and apply offsets
+            const x = (canvasSize - imgWidth) / 2 + cropSettings.offsetX;
+            const y = (canvasSize - imgHeight) / 2 + cropSettings.offsetY;
+
+            // Draw the full image first (no clipping for preview)
+            ctx.drawImage(originalImage, x, y, imgWidth, imgHeight);
+        };
+
+        const generateProcessedImage = () => {
+            if (!originalImage) return null;
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 285; // Final size for the ID card
+            canvas.width = size;
+            canvas.height = size;
+
+            // Calculate image dimensions and position (same logic as preview but scaled up)
+            const imgAspect = originalImage.width / originalImage.height;
+            let baseWidth, baseHeight;
+
+            if (imgAspect > 1) {
+                baseHeight = size * 0.8;
+                baseWidth = baseHeight * imgAspect;
+            } else {
+                baseWidth = size * 0.8;
+                baseHeight = baseWidth / imgAspect;
+            }
+
+            const imgWidth = baseWidth * cropSettings.zoom;
+            const imgHeight = baseHeight * cropSettings.zoom;
+
+            // Scale offsets proportionally
+            const scaleFactor = size / 200;
+            const x = (size - imgWidth) / 2 + (cropSettings.offsetX * scaleFactor);
+            const y = (size - imgHeight) / 2 + (cropSettings.offsetY * scaleFactor);
+
+            // Create hexagonal clipping path for final image
+            ctx.save();
+            createHexagonalClipPath(ctx, size, size);
+            ctx.clip();
+
+            // Draw the image
+            ctx.drawImage(originalImage, x, y, imgWidth, imgHeight);
+            ctx.restore();
+
+            return new Promise((resolve) => {
+                canvas.toBlob(resolve, 'image/png');
+            });
+        };
+
+        const updateSliderValues = () => {
+            document.getElementById('zoom-value').textContent = `${cropSettings.zoom.toFixed(1)}x`;
+            document.getElementById('pos-x-value').textContent = cropSettings.offsetX;
+            document.getElementById('pos-y-value').textContent = cropSettings.offsetY;
+        };
+
+        // --- Photo Upload and Preview ---
         photoInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
+                    // Update main preview
                     photoPreview.src = event.target.result;
+
+                    // Load image for cropping
+                    const img = new Image();
+                    img.onload = () => {
+                        originalImage = img;
+                        cropSettings = { zoom: 1, offsetX: 0, offsetY: 0 };
+                        processedImageBlob = null; // Reset processed image
+
+                        // Reset sliders
+                        document.getElementById('zoom-slider').value = 1;
+                        document.getElementById('pos-x-slider').value = 0;
+                        document.getElementById('pos-y-slider').value = 0;
+
+                        // Update slider value displays
+                        updateSliderValues();
+
+                        // Show crop controls and update preview
+                        document.getElementById('crop-controls').classList.add('active');
+                        document.getElementById('crop-status').textContent = 'Adjust the sliders to position your photo, then click Apply';
+                        document.getElementById('crop-status').classList.remove('applied');
+
+                        updateCropPreview();
+                    };
+                    img.src = event.target.result;
                 };
                 reader.readAsDataURL(file);
             }
+        });
+
+        // --- Crop Control Event Listeners ---
+        const cropControls = document.getElementById('crop-controls');
+        if (cropControls) {
+            const zoomSlider = document.getElementById('zoom-slider');
+            const posXSlider = document.getElementById('pos-x-slider');
+            const posYSlider = document.getElementById('pos-y-slider');
+            const resetBtn = document.getElementById('reset-crop-btn');
+            const applyBtn = document.getElementById('apply-crop-btn');
+
+            const updateSettings = () => {
+                cropSettings.zoom = parseFloat(zoomSlider.value);
+                cropSettings.offsetX = parseInt(posXSlider.value);
+                cropSettings.offsetY = parseInt(posYSlider.value);
+                updateSliderValues();
+                updateCropPreview();
+            };
+
+            zoomSlider.addEventListener('input', updateSettings);
+            posXSlider.addEventListener('input', updateSettings);
+            posYSlider.addEventListener('input', updateSettings);
+
+            resetBtn.addEventListener('click', () => {
+                cropSettings = { zoom: 1, offsetX: 0, offsetY: 0 };
+                zoomSlider.value = 1;
+                posXSlider.value = 0;
+                posYSlider.value = 0;
+                updateSliderValues();
+                updateCropPreview();
+
+                // Reset status
+                document.getElementById('crop-status').textContent = 'Adjust the sliders to position your photo, then click Apply';
+                document.getElementById('crop-status').classList.remove('applied');
+                processedImageBlob = null;
+            });
+
+            applyBtn.addEventListener('click', async () => {
+                if (originalImage) {
+                    processedImageBlob = await generateProcessedImage();
+
+                    // Update status
+                    document.getElementById('crop-status').textContent = '✓ Photo adjustments applied and ready for card generation';
+                    document.getElementById('crop-status').classList.add('applied');
+                }
+            });
+        }
+
+        // --- Form Submission with Processed Image ---
+        form.addEventListener('submit', async (e) => {
+            // Only intercept if we have a processed image
+            if (processedImageBlob) {
+                e.preventDefault();
+
+                const formData = new FormData();
+                formData.append('name', nameInput.value);
+                formData.append('reg_no', regNoInput.value);
+                formData.append('email', emailInput.value);
+                formData.append('phone', phoneInput.value);
+                formData.append('photo', processedImageBlob, 'processed_photo.png');
+
+                // Disable form during submission
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Generating...';
+
+                try {
+                    const response = await fetch('/generate', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        // Get the response text (HTML) and replace current page
+                        const html = await response.text();
+                        document.open();
+                        document.write(html);
+                        document.close();
+                    } else {
+                        throw new Error('Failed to generate card');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while generating the card. Please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Generate Card';
+                }
+            }
+            // If no processed image, let the form submit normally
         });
     }
 

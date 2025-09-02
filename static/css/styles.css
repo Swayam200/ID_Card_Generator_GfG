@@ -141,12 +141,17 @@ a:hover {
     border-radius: 50%;
     overflow: hidden;
     border: 3px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2a2a2c;
 }
 
 #photo-preview {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 input[type="file"] {
@@ -319,4 +324,99 @@ footer {
         size: 86mm 54mm;
         margin: 0;
     }
+}
+
+/* --- Image Crop/Resize Controls --- */
+.crop-controls {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #1a1a1c;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.crop-controls.active {
+    display: block;
+}
+
+.crop-controls h4 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.crop-slider-group {
+    margin-bottom: 0.75rem;
+}
+
+.crop-slider-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.crop-slider {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-color);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.crop-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--gfg-green);
+    cursor: pointer;
+}
+
+.crop-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--gfg-green);
+    cursor: pointer;
+    border: none;
+}
+
+.crop-preview-container {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--gfg-green);
+    position: relative;
+    background-color: #2a2a2c;
+}
+
+.crop-preview-container canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.crop-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.crop-buttons button {
+    flex: 1;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.crop-buttons .reset-btn {
+    background-color: #555;
+}
+
+.crop-buttons .reset-btn:hover {
+    background-color: #666;
 }

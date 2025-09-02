@@ -1,5 +1,6 @@
 import os
 import uuid
+import io
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -8,6 +9,12 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 MAX_CONTENT_LENGTH = 4 * 1024 * 1024
+
+# QR Code Configuration
+QR_CODE_SIZE = 200           # Size of QR code (200 = double the original 100)
+QR_BASE_Y = 550             # Base Y position on card
+QR_OFFSET_X = 0             # Left(-) / Right(+) adjustment
+QR_OFFSET_Y = -50           # Up(-) / Down(+) adjustment
 
 # --- App Initialization ---
 app = Flask(__name__)
@@ -36,6 +43,26 @@ def create_hexagonal_mask(size):
     ]
     draw.polygon(points, fill=255)
     return mask
+
+def generate_qr_code(data, size=(120, 120)):
+    """Generate QR code image from data"""
+    import qrcode
+    import io
+    
+    # Generate QR code using the simple method
+    qr_img = qrcode.make(data, box_size=8, border=2)
+    
+    # Convert to bytes using BytesIO
+    buffer = io.BytesIO()
+    qr_img.save(buffer)  # No format parameter needed
+    buffer.seek(0)
+    
+    # Load as PIL Image and process
+    pil_image = Image.open(buffer)
+    pil_image = pil_image.convert("RGBA")
+    pil_image = pil_image.resize(size, Image.Resampling.LANCZOS)
+    
+    return pil_image
 
 # --- Main Routes ---
 @app.route('/', methods=['GET'])
@@ -126,6 +153,20 @@ def generate_card():
 
             # --- [FIX] Using YOUR proven logic for the back image ---
             draw_back = ImageDraw.Draw(back_template)
+
+            # --- Generate and add QR code ---
+            verify_url = f"https://gfg-id-card-creator.onrender.com/verify?id={reg_no}&name={name.replace(' ', '+')}"
+
+            # --- Generate QR code with configurable positioning ---
+            qr_code = generate_qr_code(verify_url, size=(QR_CODE_SIZE, QR_CODE_SIZE))
+
+            # Calculate position using configuration
+            qr_x = ((back_template.width - QR_CODE_SIZE) // 2) + QR_OFFSET_X
+            qr_y = QR_BASE_Y + QR_OFFSET_Y
+            qr_position = (qr_x, qr_y)
+
+            back_template.paste(qr_code, qr_position, qr_code)
+
             back_reg_bbox = draw_back.textbbox((0, 0), reg_no, font=back_reg_font)
             back_reg_width = back_reg_bbox[2] - back_reg_bbox[0]
             # Using your hardcoded Y-value of 783 which you aligned perfectly.
@@ -151,6 +192,20 @@ def generate_card():
     else:
         flash('Invalid file type.')
         return redirect(url_for('index'))
+
+@app.route('/verify', methods=['GET'])
+def verify_card():
+    reg_no = request.args.get('id', '')
+    name = request.args.get('name', '')
+    
+    if not reg_no:
+        return render_template('verify.html', error="Invalid verification code"), 400
+    
+    # For now, we'll show basic info. Later you could add database lookup
+    return render_template('verify.html', 
+                         reg_no=reg_no, 
+                         name=name.replace('+', ' '),
+                         verified=True)
 
 # Error handlers and main execution block
 @app.errorhandler(413)

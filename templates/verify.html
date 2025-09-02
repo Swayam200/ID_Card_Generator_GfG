@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Card Verification{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <header class="form-header">
+        <h1>GFG Technical Team</h1>
+        <h2>ID Card Verification</h2>
+        {% if error %}
+        <p style="color: var(--error-color);">{{ error }}</p>
+        {% elif verified %}
+        <p style="color: var(--gfg-green);">✓ Valid ID Card</p>
+        {% endif %}
+    </header>
+
+    {% if verified and not error %}
+    <div class="verification-details">
+        <div class="form-group">
+            <label>Registration Number:</label>
+            <p><strong>{{ reg_no }}</strong></p>
+        </div>
+
+        <div class="form-group">
+            <label>Name:</label>
+            <p><strong>{{ name }}</strong></p>
+        </div>
+
+        <div class="form-group">
+            <label>Status:</label>
+            <p style="color: var(--gfg-green);"><strong>Verified Participant</strong></p>
+        </div>
+
+        <div class="form-group">
+            <label>Verified:</label>
+            <p><strong>{{ moment().format('MMMM Do YYYY, h:mm A') if moment else 'Just now' }}</strong></p>
+        </div>
+    </div>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}" class="back-link">Generate New Card</a>
+</div>
+{% endblock %}
